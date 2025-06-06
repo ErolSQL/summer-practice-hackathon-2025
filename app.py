@@ -1,15 +1,18 @@
 from flask import Flask, url_for, render_template, jsonify, session, request, redirect
 import smtplib
-from models import db, User, OTP
+from models import db, User, OTP, Project, Comment
 import random
 import os
 import string
+from flask_migrate import Migrate
+from werkzeug.utils import secure_filename
+
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 
 app = Flask(__name__)
-
+migrate = Migrate(app, db)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gitgud.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -136,12 +139,61 @@ def verify_login():
     if not user:
         return "Account doesn't exist", 400
 
-    # Stergem OTP-ul dupa folosire
+
     db.session.delete(otp_entry)
     db.session.commit()
 
-    # Login efectiv
+
     session['user_id'] = user.id
+
+    return redirect(url_for('account'))
+
+
+
+
+
+
+UPLOAD_FOLDER = 'storage'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+
+app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  
+
+@app.route('/submit-project', methods=['POST'])
+def submit_project():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    title = request.form.get('projectTitle')
+    client_name = request.form.get('clientName')
+    project_type = request.form.get('projectType')
+    description = request.form.get('projectDescription')
+
+    new_project = Project(
+        user_id=session['user_id'],
+        title=title,
+        client_name=client_name,
+        project_type=project_type,
+        description=description
+    )
+
+    db.session.add(new_project)
+    db.session.commit()
+
+    project_folder = os.path.join(UPLOAD_FOLDER, str(new_project.id))
+    os.makedirs(project_folder, exist_ok=True)
+
+    files = request.files.getlist('projectFile')
+    for file in files:
+        if file and file.filename:
+
+            relative_path = file.filename
+            safe_path = os.path.normpath(relative_path)  # normalizeaza path-ul
+            full_path = os.path.join(project_folder, safe_path)
+
+
+            os.makedirs(os.path.dirname(full_path), exist_ok=True)
+            file.save(full_path)
 
     return redirect(url_for('account'))
 
@@ -177,12 +229,28 @@ def registerpage():
 @app.route('/account')
 def account():
     if 'user_id' not in session:
-        return redirect(url_for('login'))  # redirect corect spre login
+        return redirect(url_for('login'))
     
     user = User.query.get(session['user_id'])
-    email = user.email
+    projects = Project.query.filter_by(user_id=user.id).all()
 
-    return render_template('account.html', email=email)
+
+    for project in projects:
+        project_folder = os.path.join(UPLOAD_FOLDER, str(project.id))
+        if os.path.exists(project_folder):
+            project.files = os.listdir(project_folder)
+        else:
+            project.files = []
+
+    return render_template('account.html', email=user.email, projects=projects)
+
+
+
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
+    return redirect(url_for('home'))
+
 
 
 

@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Tech Guru</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <style>
+        /* Admin Dashboard Specific Styles */
+        .admin-section {
+            padding: 3rem 0;
+            background-color: var(--dark-color);
+            min-height: calc(100vh - 140px);
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: white;
+            text-align: center;
+        }
+
+        .admin-badge {
+            display: inline-block;
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .admin-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .admin-subtitle {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .admin-tab-btn {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .admin-tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .admin-tab-btn:hover {
+            color: var(--text-color);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .admin-tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .admin-tab-content.active {
+            display: block;
+        }
+
+        /* Dashboard Overview */
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .stat-trend {
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .trend-up {
+            color: var(--secondary-color);
+        }
+
+        .trend-down {
+            color: #ef4444;
+        }
+
+        /* Document Approval Section */
+        .approval-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .approval-title {
+            color: var(--text-color);
+            font-size: 1.5rem;
+        }
+
+        .approval-filters {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .documents-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .document-item {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .document-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--box-shadow);
+        }
+
+        .document-item.pending {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .document-item.approved {
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .document-item.rejected {
+            border-left: 4px solid #ef4444;
+        }
+
+        .document-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .document-info {
+            flex: 1;
+        }
+
+        .document-title {
+            color: var(--text-color);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .document-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .document-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-approved {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-rejected {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .document-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .document-files {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .file-tag {
+            background-color: var(--darker-color);
+            color: var(--text-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .document-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .btn-approve {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background-color: var(--secondary-hover);
+        }
+
+        .btn-reject {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background-color: #dc2626;
+        }
+
+        .btn-view {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-view:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-comment {
+            background-color: var(--light-gray);
+            color: var(--text-color);
+        }
+
+        .btn-comment:hover {
+            background-color: var(--lighter-color);
+        }
+
+        /* Recent Activity */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .activity-item {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.approve {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: var(--secondary-color);
+        }
+
+        .activity-icon.reject {
+            background-color: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .activity-icon.upload {
+            background-color: rgba(99, 102, 241, 0.2);
+            color: var(--primary-color);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            color: var(--text-color);
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-time {
+            color: var(--gray-color);
+            font-size: 0.8rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .admin-tabs {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            .admin-tab-btn {
+                border-bottom: 1px solid var(--border-color);
+                border-radius: 0;
+            }
+
+            .dashboard-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .approval-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .approval-filters {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .document-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .document-actions {
+                width: 100%;
+            }
+
+            .action-btn {
+                flex: 1;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .admin-section {
+                padding: 2rem 0;
+            }
+
+            .admin-header {
+                padding: 1.5rem;
+            }
+
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .document-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include 'components/navbar.html' %}
+
+    <section class="admin-section">
+        <div class="container">
+            <!-- Admin Header -->
+            <div class="admin-header">
+                <div class="admin-badge">🛡️ ADMINISTRATOR</div>
+                <h1 class="admin-title">Admin Dashboard</h1>
+                <p class="admin-subtitle">Manage platform content and user submissions</p>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <div class="admin-tabs">
+                <button class="admin-tab-btn active" data-tab="overview">
+                    📊 Overview
+                </button>
+                <button class="admin-tab-btn" data-tab="documents">
+                    📄 Document Approval
+                    <span class="notification-badge">5</span>
+                </button>
+                <button class="admin-tab-btn" data-tab="activity">
+                    📈 Recent Activity
+                </button>
+                <button class="admin-tab-btn" data-tab="users">
+                    👥 Users
+                </button>
+            </div>
+
+            <!-- Overview Tab -->
+            <div class="admin-tab-content active" id="overview">
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <span class="stat-icon">👥</span>
+                        <span class="stat-number">247</span>
+                        <div class="stat-label">Total Users</div>
+                        <div class="stat-trend trend-up">↗ +12 this week</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">📄</span>
+                        <span class="stat-number">89</span>
+                        <div class="stat-label">Pending Documents</div>
+                        <div class="stat-trend trend-up">↗ +5 today</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">✅</span>
+                        <span class="stat-number">156</span>
+                        <div class="stat-label">Approved This Month</div>
+                        <div class="stat-trend trend-up">↗ +23%</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">🚀</span>
+                        <span class="stat-number">342</span>
+                        <div class="stat-label">Active Projects</div>
+                        <div class="stat-trend trend-down">↘ -3%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Document Approval Tab -->
+            <div class="admin-tab-content" id="documents">
+                <div class="approval-header">
+                    <h3 class="approval-title">Document Approval Queue</h3>
+                    <div class="approval-filters">
+                        <select class="filter-select" id="statusFilter">
+                            <option value="all">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                        <select class="filter-select" id="typeFilter">
+                            <option value="all">All Types</option>
+                            <option value="project">Projects</option>
+                            <option value="document">Documents</option>
+                            <option value="image">Images</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="documents-list">
+                    <div class="document-item pending">
+                        <div class="document-header">
+                            <div class="document-info">
+                                <div class="document-title">Sarah's Portfolio Website - Final Design</div>
+                                <div class="document-meta">
+                                    <span class="meta-item">👤 Submitted by: John Doe</span>
+                                    <span class="meta-item">📅 Date: Jan 20, 2024</span>
+                                    <span class="meta-item">📁 Type: Project</span>
+                                </div>
+                            </div>
+                            <span class="document-status status-pending">Pending</span>
+                        </div>
+                        <div class="document-description">
+                            Complete website design files for Sarah's photography portfolio including responsive layouts, image galleries, and contact forms. Ready for client review and approval.
+                        </div>
+                        <div class="document-files">
+                            <span class="file-tag">📄 design-mockups.pdf</span>
+                            <span class="file-tag">🖼️ homepage-design.jpg</span>
+                            <span class="file-tag">📦 source-files.zip</span>
+                        </div>
+                        <div class="document-actions">
+                            <button class="action-btn btn-approve" onclick="approveDocument(this)">✅ Approve</button>
+                            <button class="action-btn btn-reject" onclick="rejectDocument(this)">❌ Reject</button>
+                            <button class="action-btn btn-view">👁️ View Files</button>
+                            <button class="action-btn btn-comment">💬 Comment</button>
+                        </div>
+                    </div>
+
+                    <div class="document-item pending">
+                        <div class="document-header">
+                            <div class="document-info">
+                                <div class="document-title">Mobile App UI Components</div>
+                                <div class="document-meta">
+                                    <span class="meta-item">👤 Submitted by: Jane Smith</span>
+                                    <span class="meta-item">📅 Date: Jan 19, 2024</span>
+                                    <span class="meta-item">📁 Type: Document</span>
+                                </div>
+                            </div>
+                            <span class="document-status status-pending">Pending</span>
+                        </div>
+                        <div class="document-description">
+                            UI component library for the fitness tracking mobile app including buttons, forms, navigation elements, and custom icons.
+                        </div>
+                        <div class="document-files">
+                            <span class="file-tag">🎨 ui-components.sketch</span>
+                            <span class="file-tag">📄 style-guide.pdf</span>
+                        </div>
+                        <div class="document-actions">
+                            <button class="action-btn btn-approve" onclick="approveDocument(this)">✅ Approve</button>
+                            <button class="action-btn btn-reject" onclick="rejectDocument(this)">❌ Reject</button>
+                            <button class="action-btn btn-view">👁️ View Files</button>
+                            <button class="action-btn btn-comment">💬 Comment</button>
+                        </div>
+                    </div>
+
+                    <div class="document-item approved">
+                        <div class="document-header">
+                            <div class="document-info">
+                                <div class="document-title">E-commerce Database Schema</div>
+                                <div class="document-meta">
+                                    <span class="meta-item">👤 Submitted by: Mike Johnson</span>
+                                    <span class="meta-item">📅 Date: Jan 18, 2024</span>
+                                    <span class="meta-item">📁 Type: Document</span>
+                                </div>
+                            </div>
+                            <span class="document-status status-approved">Approved</span>
+                        </div>
+                        <div class="document-description">
+                            Complete database schema for Emma's online store including user management, product catalog, orders, and payment processing.
+                        </div>
+                        <div class="document-files">
+                            <span class="file-tag">🗄️ database-schema.sql</span>
+                            <span class="file-tag">📊 erd-diagram.png</span>
+                        </div>
+                        <div class="document-actions">
+                            <button class="action-btn btn-view">👁️ View Files</button>
+                            <button class="action-btn btn-comment">💬 Comment</button>
+                        </div>
+                    </div>
+
+                    <div class="document-item rejected">
+                        <div class="document-header">
+                            <div class="document-info">
+                                <div class="document-title">Gaming PC Build Guide</div>
+                                <div class="document-meta">
+                                    <span class="meta-item">👤 Submitted by: Alex Wilson</span>
+                                    <span class="meta-item">📅 Date: Jan 17, 2024</span>
+                                    <span class="meta-item">📁 Type: Document</span>
+                                </div>
+                            </div>
+                            <span class="document-status status-rejected">Rejected</span>
+                        </div>
+                        <div class="document-description">
+                            Step-by-step guide for building a high-performance gaming PC with component recommendations and assembly instructions.
+                        </div>
+                        <div class="document-files">
+                            <span class="file-tag">📄 build-guide.pdf</span>
+                            <span class="file-tag">🖼️ assembly-photos.zip</span>
+                        </div>
+                        <div class="document-actions">
+                            <button class="action-btn btn-view">👁️ View Files</button>
+                            <button class="action-btn btn-comment">💬 View Feedback</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Tab -->
+            <div class="admin-tab-content" id="activity">
+                <h3 style="color: var(--text-color); margin-bottom: 2rem;">Recent Activity</h3>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon approve">✅</div>
+                        <div class="activity-content">
+                            <div class="activity-text">Approved "E-commerce Database Schema" by Mike Johnson</div>
+                            <div class="activity-time">2 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon upload">📄</div>
+                        <div class="activity-content">
+                            <div class="activity-text">New document "Mobile App UI Components" submitted by Jane Smith</div>
+                            <div class="activity-time">4 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon reject">❌</div>
+                        <div class="activity-content">
+                            <div class="activity-text">Rejected "Gaming PC Build Guide" by Alex Wilson</div>
+                            <div class="activity-time">6 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon approve">✅</div>
+                        <div class="activity-content">
+                            <div class="activity-text">Approved "Website Wireframes" by Sarah Davis</div>
+                            <div class="activity-time">1 day ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon upload">📄</div>
+                        <div class="activity-content">
+                            <div class="activity-text">New project "Sarah's Portfolio Website" uploaded by John Doe</div>
+                            <div class="activity-time">2 days ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Tab -->
+            <div class="admin-tab-content" id="users">
+                <h3 style="color: var(--text-color); margin-bottom: 2rem;">User Management</h3>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <span class="stat-icon">👤</span>
+                        <span class="stat-number">247</span>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">🟢</span>
+                        <span class="stat-number">189</span>
+                        <div class="stat-label">Active Users</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">📅</span>
+                        <span class="stat-number">23</span>
+                        <div class="stat-label">New This Week</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">⭐</span>
+                        <span class="stat-number">45</span>
+                        <div class="stat-label">Premium Users</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% include 'components/footer.html' %}
+
+    <script src="static/script.js"></script>
+    <script>
+        // Tab switching functionality
+        function switchAdminTab(tabName) {
+            // Remove active class from all tabs and content
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.admin-tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to clicked tab and corresponding content
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Tab button event listeners
+        document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabName = btn.getAttribute('data-tab');
+                switchAdminTab(tabName);
+            });
+        });
+
+        // Document approval functions
+        function approveDocument(button) {
+            const documentItem = button.closest('.document-item');
+            const statusElement = documentItem.querySelector('.document-status');
+            const actionsContainer = documentItem.querySelector('.document-actions');
+            
+            // Update visual state
+            documentItem.classList.remove('pending');
+            documentItem.classList.add('approved');
+            statusElement.textContent = 'Approved';
+            statusElement.className = 'document-status status-approved';
+            
+            // Update actions
+            actionsContainer.innerHTML = `
+                <button class="action-btn btn-view">👁️ View Files</button>
+                <button class="action-btn btn-comment">💬 Comment</button>
+            `;
+            
+            // Show success animation
+            button.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                button.style.transform = 'scale(1)';
+            }, 150);
+            
+            // Update notification badge
+            updateNotificationBadge(-1);
+            
+            // Show confirmation
+            showNotification('Document approved successfully!', 'success');
+        }
+
+        function rejectDocument(button) {
+            const documentItem = button.closest('.document-item');
+            const statusElement = documentItem.querySelector('.document-status');
+            const actionsContainer = documentItem.querySelector('.document-actions');
+            
+            // Update visual state
+            documentItem.classList.remove('pending');
+            documentItem.classList.add('rejected');
+            statusElement.textContent = 'Rejected';
+            statusElement.className = 'document-status status-rejected';
+            
+            // Update actions
+            actionsContainer.innerHTML = `
+                <button class="action-btn btn-view">👁️ View Files</button>
+                <button class="action-btn btn-comment">💬 View Feedback</button>
+            `;
+            
+            // Show rejection animation
+            button.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                button.style.transform = 'scale(1)';
+            }, 150);
+            
+            // Update notification badge
+            updateNotificationBadge(-1);
+            
+            // Show confirmation
+            showNotification('Document rejected', 'error');
+        }
+
+        function updateNotificationBadge(change) {
+            const badge = document.querySelector('.notification-badge');
+            const currentCount = parseInt(badge.textContent);
+            const newCount = Math.max(0, currentCount + change);
+            badge.textContent = newCount;
+            
+            if (newCount === 0) {
+                badge.style.display = 'none';
+            }
+        }
+
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                ${type === 'success' ? 'background-color: var(--secondary-color);' : 'background-color: #ef4444;'}
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Filter functionality
+        document.getElementById('statusFilter').addEventListener('change', function() {
+            filterDocuments();
+        });
+
+        document.getElementById('typeFilter').addEventListener('change', function() {
+            filterDocuments();
+        });
+
+        function filterDocuments() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+            const documents = document.querySelectorAll('.document-item');
+            
+            documents.forEach(doc => {
+                let showDoc = true;
+                
+                // Status filter
+                if (statusFilter !== 'all') {
+                    const hasStatus = doc.classList.contains(statusFilter);
+                    if (!hasStatus) showDoc = false;
+                }
+                
+                // Type filter (simplified - in real app would check actual type)
+                if (typeFilter !== 'all') {
+                    const typeText = doc.querySelector('.meta-item:nth-child(3)').textContent.toLowerCase();
+                    if (!typeText.includes(typeFilter)) showDoc = false;
+                }
+                
+                doc.style.display = showDoc ? 'block' : 'none';
+            });
+        }
+
+        // Animate stats on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(stat => {
+                const finalValue = parseInt(stat.textContent);
+                let currentValue = 0;
+                const increment = finalValue / 30;
+                
+                const timer = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= finalValue) {
+                        stat.textContent = finalValue;
+                        clearInterval(timer);
+                    } else {
+                        stat.textContent = Math.floor(currentValue);
+                    }
+                }, 50);
+            });
+        });
+
+        // Hover effects for document items
+        document.querySelectorAll('.document-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>

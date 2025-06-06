@@ -437,54 +437,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="project-item">
-                        <div class="project-thumbnail">💻</div>
-                        <div class="project-details">
-                            <div class="project-title">Mike's Gaming PC Setup</div>
-                            <div class="project-description">Complete gaming PC build and optimization for maximum performance and RGB lighting setup.</div>
-                            <div class="project-meta">
-                                <span class="project-status status-completed">Completed</span>
-                                <span class="project-date">Completed: Dec 20, 2023</span>
-                            </div>
-                            <div class="project-actions">
-                                <button class="action-btn btn-edit">Edit</button>
-                                <button class="action-btn btn-delete">Delete</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="project-item">
-                        <div class="project-thumbnail">📱</div>
-                        <div class="project-details">
-                            <div class="project-title">Alex's Fitness App</div>
-                            <div class="project-description">Mobile app development for tracking workouts and nutrition with social features.</div>
-                            <div class="project-meta">
-                                <span class="project-status status-paused">Paused</span>
-                                <span class="project-date">Started: Nov 5, 2023</span>
-                            </div>
-                            <div class="project-actions">
-                                <button class="action-btn btn-edit">Edit</button>
-                                <button class="action-btn btn-delete">Delete</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="project-item">
-                        <div class="project-thumbnail">🛒</div>
-                        <div class="project-details">
-                            <div class="project-title">Emma's Online Store</div>
-                            <div class="project-description">E-commerce website with payment integration and inventory management system.</div>
-                            <div class="project-meta">
-                                <span class="project-status status-active">Active</span>
-                                <span class="project-date">Started: Jan 8, 2024</span>
-                            </div>
-                            <div class="project-actions">
-                                <button class="action-btn btn-edit">Edit</button>
-                                <button class="action-btn btn-delete">Delete</button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -493,7 +445,7 @@
                 <div class="upload-container">
                     <h3 style="color: var(--text-color); margin-bottom: 2rem; text-align: center;">Upload New Project</h3>
                     
-                    <form class="upload-form" id="uploadForm">
+                    <form class="upload-form" id="uploadForm" method="POST" action="/submit-project" enctype="multipart/form-data">
                         <div class="form-group">
                             <label for="projectTitle">Project Title</label>
                             <input 
@@ -508,7 +460,7 @@
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label for="clientName">Client Name</label>
+                                <label for="clientName">Project Name</label>
                                 <input 
                                     type="text" 
                                     id="clientName" 
@@ -550,35 +502,12 @@
                                 <div class="upload-icon">📁</div>
                                 <div class="upload-text">Drag and drop files here</div>
                                 <div class="upload-hint">or click to browse (Max 10MB per file)</div>
-                                <input type="file" id="fileInput" class="file-input" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx,.zip">
+                                <input type="file" id="fileInput" name="projectFile" class="file-input" multiple webkitdirectory directory>
                             </div>
                             <div class="selected-files" id="selectedFiles"></div>
                         </div>
 
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="startDate">Start Date</label>
-                                <input 
-                                    type="date" 
-                                    id="startDate" 
-                                    name="startDate" 
-                                    class="form-input"
-                                >
-                            </div>
-                            <div class="form-group">
-                                <label for="priority">Priority</label>
-                                <select id="priority" name="priority" class="form-input">
-                                    <option value="low">Low</option>
-                                    <option value="medium" selected>Medium</option>
-                                    <option value="high">High</option>
-                                    <option value="urgent">Urgent</option>
-                                </select>
-                            </div>
-                        </div>
-
                         <button type="submit" class="btn primary auth-btn">
-                            <span class="btn-text">Create Project</span>
-                            <span class="btn-loading">Creating...</span>
                         </button>
                     </form>
                 </div>
@@ -757,23 +686,7 @@
             });
         });
 
-        // Form submission handling
-        document.getElementById('uploadForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const submitBtn = this.querySelector('.auth-btn');
-            submitBtn.classList.add('loading');
-            
-            // Simulate upload process
-            setTimeout(() => {
-                submitBtn.classList.remove('loading');
-                alert('Project created successfully!');
-                this.reset();
-                selectedFiles.innerHTML = '';
-                uploadedFiles = [];
-                switchTab('manage');
-            }, 2000);
-        });
+    
     </script>
 </body>
 </html>
