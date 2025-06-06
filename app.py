@@ -6,7 +6,7 @@ import os
 import string
 from flask_migrate import Migrate
 from werkzeug.utils import secure_filename
-
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
@@ -39,119 +39,47 @@ db.init_app(app)
 def page_not_found(e):
     return render_template('error.html'), 404
 
-def send_email(to_email, code):
-    smtp_server = 'smtp.gmail.com'
-    smtp_port = 587
-    from_email = EMAIL_USER
-    password = EMAIL_PASSWORD
-
-    subject = 'Your verification code'
-    body = f'Your code is: {code}'
-
-    message = f'Subject: {subject}\n\n{body}'
-
-    with smtplib.SMTP(smtp_server, smtp_port) as server:
-        server.starttls()
-        server.login(from_email, password)
-        server.sendmail(from_email, to_email, message)
 
 
-@app.route('/request-otp', methods=['POST'])
-def request_otp():
-    email = request.form.get('email')
-    code = generate_otp()
 
-    OTP.query.filter_by(email=email).delete()
 
-    otp_entry = OTP(email=email, code=code, created_at=datetime.utcnow())
-    db.session.add(otp_entry)
-    db.session.commit()
 
-    send_email(email, code)
 
-    
-    return '', 204
 
-@app.route('/register', methods=['POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    email = request.form.get('email')
-    code = request.form.get('code')
-    confirm_code = request.form.get('confirm_code')
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        if User.query.filter_by(email=email).first():
+            return "User already exists", 400
+        hashed_pw = generate_password_hash(password)
+        user = User(email=email, password_hash=hashed_pw)
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for('login'))
+    return render_template('register.html')
 
-    if code != confirm_code:
-        return "Codes do not match", 400
 
-    otp_entry = OTP.query.filter_by(email=email, code=code).first()
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        user = User.query.filter_by(email=email).first()
+        if not user or not check_password_hash(user.password_hash, password):
+            return "Invalid credentials", 400
+        session['user_id'] = user.id
+        return redirect(url_for('account'))
+    return render_template('login.html')
 
-    if not otp_entry:
-        return "Invalid code", 400
 
-    if datetime.utcnow() - otp_entry.created_at > timedelta(minutes=1):
-        return "Code expired", 400
-
-    user = User.query.filter_by(email=email).first()
-    if user:
-        return "User already exists", 400
-
-    user = User(email=email)
-    db.session.add(user)
-    db.session.commit()
-
-    
-    db.session.delete(otp_entry)
-    db.session.commit()
-
+@app.route('/logout')
+def logout():
+    session.pop('user_id', None)
     return redirect(url_for('login'))
 
 
-
-
-
-@app.route('/login/send-otp', methods=['POST'])
-def send_login_otp():
-    email = request.form.get('email')
-
-    user = User.query.filter_by(email=email).first()
-    if not user:
-        return "Account doesn't exist", 400
-
-    code = generate_otp()
-
-    OTP.query.filter_by(email=email).delete()
-
-    otp_entry = OTP(email=email, code=code, created_at=datetime.utcnow())
-    db.session.add(otp_entry)
-    db.session.commit()
-
-    send_email(email, code)
-
-    return '', 204
-
-@app.route('/login', methods=['POST'])
-def verify_login():
-    email = request.form.get('email')
-    code = request.form.get('code')
-
-    otp_entry = OTP.query.filter_by(email=email, code=code).first()
-
-    if not otp_entry:
-        return "Invalid code", 400
-
-    if datetime.utcnow() - otp_entry.created_at > timedelta(minutes=1):
-        return "Code expired", 400
-
-    user = User.query.filter_by(email=email).first()
-    if not user:
-        return "Account doesn't exist", 400
-
-
-    db.session.delete(otp_entry)
-    db.session.commit()
-
-
-    session['user_id'] = user.id
-
-    return redirect(url_for('account'))
 
 
 
@@ -224,12 +152,20 @@ def home():
 
 
 @app.route('/login')
-def login():
+def loginpage():
     return render_template("login.html")
 
 @app.route('/register')
 def registerpage():
     return render_template('register.html')
+
+
+
+
+
+
+
+
 
 @app.route('/account')
 def account():
@@ -252,7 +188,7 @@ def account():
 
 
 @app.route('/logout')
-def logout():
+def logoutpage():
     session.pop('user_id', None)
     return redirect(url_for('home'))
 
