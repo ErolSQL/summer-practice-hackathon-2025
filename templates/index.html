@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Guru - Your Tech Support Hero</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    
+
+    {% include 'components/navbar.html' %}
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Your Friends' <span>Tech Hero</span></h1>
+                <p>Helping friends manage their tech projects with ease. They can't survive without you!</p>
+                <div class="hero-buttons">
+                    <a href="#" class="btn primary">Manage Projects</a>
+                    <a href="#" class="btn secondary">Get Help</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="/placeholder.svg?height=400&width=400" alt="Tech Guru Hero">
+            </div>
+        </div>
+    </section>
+
+    <section class="services">
+        <div class="container">
+            <h2 class="section-title">How You Help Your Friends</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <img src="/placeholder.svg?height=80&width=80" alt="Project Management">
+                    </div>
+                    <h3>Project Management</h3>
+                    <p>Track and organize all your friends' tech projects in one place.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <img src="/placeholder.svg?height=80&width=80" alt="Troubleshooting">
+                    </div>
+                    <h3>Troubleshooting</h3>
+                    <p>Solve technical problems with step-by-step guidance.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <img src="/placeholder.svg?height=80&width=80" alt="Resource Library">
+                    </div>
+                    <h3>Resource Library</h3>
+                    <p>Access tutorials and guides to help your friends learn.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <img src="/placeholder.svg?height=80&width=80" alt="Tech Advice">
+                    </div>
+                    <h3>Tech Advice</h3>
+                    <p>Provide expert recommendations on hardware and software.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="projects">
+        <div class="container">
+            <h2 class="section-title">Current Projects</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="/placeholder.svg?height=200&width=300" alt="Website Project">
+                    </div>
+                    <div class="project-info">
+                        <h3>Sarah's Website</h3>
+                        <p class="project-status">In Progress</p>
+                        <p>Building a portfolio website for Sarah's photography business.</p>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="/placeholder.svg?height=200&width=300" alt="Computer Setup">
+                    </div>
+                    <div class="project-info">
+                        <h3>Mike's PC Setup</h3>
+                        <p class="project-status">Completed</p>
+                        <p>Configured a new gaming PC with optimal performance settings.</p>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image">
+                        <img src="/placeholder.svg?height=200&width=300" alt="App Development">
+                    </div>
+                    <div class="project-info">
+                        <h3>Alex's Mobile App</h3>
+                        <p class="project-status">Planning</p>
+                        <p>Designing a fitness tracking app for Alex's new business idea.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="view-more">
+                <a href="#" class="btn secondary">View All Projects</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title">What Your Friends Say</h2>
+            <div class="testimonials-slider">
+                <div class="testimonial active">
+                    <div class="testimonial-content">
+                        <p>"I couldn't have launched my online store without your help. You're a lifesaver!"</p>
+                        <div class="testimonial-author">
+                            <img src="/placeholder.svg?height=60&width=60" alt="Emma" class="author-image">
+                            <div class="author-info">
+                                <h4>Emma</h4>
+                                <p>Small Business Owner</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-content">
+                        <p>"You fixed my laptop when no one else could. I don't know what I'd do without your tech wizardry!"</p>
+                        <div class="testimonial-author">
+                            <img src="/placeholder.svg?height=60&width=60" alt="David" class="author-image">
+                            <div class="author-info">
+                                <h4>David</h4>
+                                <p>Graphic Designer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial">
+                    <div class="testimonial-content">
+                        <p>"Thanks to your guidance, I finally understand how to manage my website. You explain tech in a way that makes sense!"</p>
+                        <div class="testimonial-author">
+                            <img src="/placeholder.svg?height=60&width=60" alt="Lisa" class="author-image">
+                            <div class="author-info">
+                                <h4>Lisa</h4>
+                                <p>Content Creator</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-dots">
+                <span class="dot active" data-index="0"></span>
+                <span class="dot" data-index="1"></span>
+                <span class="dot" data-index="2"></span>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Make Your Friends' Tech Lives Easier?</h2>
+                <p>Start managing projects and providing tech support all in one place.</p>
+                <a href="#" class="btn primary">Get Started Now</a>
+            </div>
+        </div>
+    </section>
+
+    {% include 'components/footer.html' %}
+
+
+    <script src="static/script.js"></script>
+</body>
+</html>

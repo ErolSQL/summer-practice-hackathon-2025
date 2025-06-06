@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Tech Guru</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+
+    {% include 'components/navbar.html'%}
+
+
+    <section class="auth-section">
+        <div class="container">
+            <div class="auth-container">
+                <div class="auth-card">
+                    <div class="auth-header">
+                        <h2>Welcome Back</h2>
+                        <p>Login to your Tech Guru account</p>
+                    </div>
+                    
+                    <form class="auth-form" id="loginForm">
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                required 
+                                placeholder="Enter your email"
+                                class="form-input"
+                            >
+                            <span class="form-error" id="emailError"></span>
+                        </div>
+                        <button type="button" id="sendCodeBtn" class="btn secondary send-code-btn">
+                                Send Code
+                        </button>
+
+                        <div class="form-group">
+                            <label for="code">8-Digit Code</label>
+                            <input 
+                                type="text" 
+                                id="code" 
+                                name="code" 
+                                required 
+                                placeholder="Enter your 8-digit code"
+                                class="form-input"
+                                maxlength="8"
+                                pattern="[0-9]{8}"
+                            >
+                            <span class="form-error" id="codeError"></span>
+                        </div>
+
+                        <button type="submit" class="btn primary auth-btn">
+                            <span class="btn-text">Login</span>
+                            <span class="btn-loading">Logging in...</span>
+                        </button>
+                    </form>
+
+                    <div class="auth-footer">
+                        <p>Don't have an account? <a href="{{url_for('register')}}" class="auth-link">Register here</a></p>
+                        <p><a href="#" class="auth-link">Forgot your code?</a></p>
+                    </div>
+                </div>
+
+               
+            </div>
+        </div>
+    </section>
+
+   {% include 'components/footer.html'%}
+
+    <script src="static/script.js"></script>
+</body>
+</html>

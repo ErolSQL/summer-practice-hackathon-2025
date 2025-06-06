@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - Tech Guru</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    {% include 'components/navbar.html'%}
+
+    <section class="error-section">
+        <div class="container">
+            <div class="error-container">
+                <div class="error-content">
+                    <div class="error-code">
+                        <span class="error-number">4</span>
+                        <span class="error-number">0</span>
+                        <span class="error-number">4</span>
+                    </div>
+                    
+                    <div class="error-message">
+                        <h1>Page Not Found</h1>
+                        <p>Oops! The page you're looking for doesn't exist. It might have been moved, deleted, or you entered the wrong URL.</p>
+                    </div>
+
+                    <div class="error-suggestions">
+                        <h3>What can you do?</h3>
+                        <ul>
+                            <li>Check the URL for typos</li>
+                            <li>Go back to the previous page</li>
+                            <li>Visit our homepage</li>
+                            <li>Contact us if you think this is an error</li>
+                        </ul>
+                    </div>
+
+                    <div class="error-actions">
+                        <a href="{{url_for('home')}}" class="btn primary">Go to Homepage</a>
+                        <button onclick="history.back()" class="btn secondary">Go Back</button>
+                    </div>
+
+                    <!-- <div class="error-links">
+                        <h4>Quick Links</h4>
+                        <div class="quick-links">
+                            <a href="index.html#services" class="quick-link">
+                                <div class="quick-link-icon">🛠️</div>
+                                <span>Services</span>
+                            </a>
+                            <a href="index.html#projects" class="quick-link">
+                                <div class="quick-link-icon">📁</div>
+                                <span>Projects</span>
+                            </a>
+                            <a href="login.html" class="quick-link">
+                                <div class="quick-link-icon">🔐</div>
+                                <span>Login</span>
+                            </a>
+                            <a href="register.html" class="quick-link">
+                                <div class="quick-link-icon">👤</div>
+                                <span>Register</span>
+                            </a>
+                        </div>
+                    </div> -->
+                </div>
+
+                
+            </div>
+        </div>
+    </section>
+
+        {% include 'components/navbar.html'%}
+
+    
+
+    <script src="static/script.js"></script>
+</body>
+</html>
