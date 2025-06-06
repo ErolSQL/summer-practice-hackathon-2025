@@ -17,8 +17,8 @@
             <nav>
                 <ul>
                     <li><a href="{{url_for('home')}}">Home</a></li>
-                    <li><a href="#">Projects</a></li>
-                    <li><a href="#">Resources</a></li>
+                    <li><a href="{{url_for('projects')}}">Projects</a></li>
+                    <!-- <li><a href="#">Resources</a></li> -->
                     <li>
                         <a href="{{ url_for('account') if 'user_id' in session else url_for('registerpage') }}">
                             Account

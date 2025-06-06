@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sarah's Photography Portfolio - Tech Guru</title>
+    <link rel="stylesheet" href="static/styles.css">
+    <style>
+        /* Project Detail Page Specific Styles */
+        .project-detail-section {
+            padding: 2rem 0;
+            background: linear-gradient(135deg, var(--dark-color) 0%, var(--darker-color) 100%);
+            min-height: calc(100vh - 140px);
+        }
+
+        .breadcrumb {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: var(--primary-hover);
+        }
+
+        .breadcrumb span {
+            color: var(--gray-color);
+            margin: 0 0.5rem;
+        }
+
+        .project-hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #4f46e5 100%);
+            border-radius: 15px;
+            padding: 3rem 2rem;
+            margin-bottom: 3rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-hero-content {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .project-info h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .project-client {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .project-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            opacity: 0.95;
+            margin-bottom: 2rem;
+        }
+
+        .project-tags {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .project-tag {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .project-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .project-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .project-main {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .project-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .sidebar-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .sidebar-card h3 {
+            color: var(--text-color);
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .project-gallery {
+            margin-bottom: 3rem;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .gallery-item {
+            aspect-ratio: 16/10;
+            background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .gallery-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(99, 102, 241, 0.1) 100%);
+        }
+
+        .project-details-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .project-details-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .project-details-list li:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .detail-value {
+            color: var(--text-secondary);
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .progress-section {
+            margin-bottom: 2rem;
+        }
+
+        .progress-bar-large {
+            width: 100%;
+            height: 12px;
+            background-color: var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+
+        .progress-fill-large {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 6px;
+            transition: width 1s ease;
+            position: relative;
+        }
+
+        .progress-fill-large::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .tech-item {
+            background: var(--darker-color);
+            color: var(--text-color);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .tech-item:hover {
+            border-color: var(--primary-color);
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .project-timeline {
+            position: relative;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            border: 3px solid var(--card-bg);
+        }
+
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 1.5rem;
+            width: 2px;
+            height: calc(100% + 1rem);
+            background: var(--border-color);
+        }
+
+        .timeline-item:last-child::after {
+            display: none;
+        }
+
+        .timeline-date {
+            color: var(--primary-color);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .timeline-title {
+            color: var(--text-color);
+            font-weight: 600;
+            margin: 0.5rem 0;
+        }
+
+        .timeline-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 2.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .comments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .comments-title {
+            color: var(--text-color);
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .comments-count {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            background: var(--darker-color);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+
+        .comment-form {
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            background: var(--darker-color);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .comment-form h4 {
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: var(--gray-color);
+        }
+
+        .comment-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .comment-submit {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .comment-submit:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .comment-item {
+            padding: 2rem;
+            background: var(--darker-color);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .comment-item:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .comment-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .author-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .author-name {
+            color: var(--text-color);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .comment-date {
+            color: var(--gray-color);
+            font-size: 0.9rem;
+        }
+
+        .comment-rating {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .star {
+            color: #fbbf24;
+            font-size: 1.2rem;
+        }
+
+        .star.empty {
+            color: var(--border-color);
+        }
+
+        .comment-text {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .comment-action {
+            background: none;
+            border: none;
+            color: var(--gray-color);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .comment-action:hover {
+            color: var(--primary-color);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .comment-action.liked {
+            color: var(--primary-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .project-hero-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                text-align: center;
+            }
+
+            .project-info h1 {
+                font-size: 2.2rem;
+            }
+
+            .project-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .comment-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .project-main,
+            .sidebar-card,
+            .comments-section {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .project-detail-section {
+                padding: 1.5rem 0;
+            }
+
+            .project-hero {
+                padding: 2rem 1.5rem;
+            }
+
+            .project-info h1 {
+                font-size: 1.8rem;
+            }
+
+            .comment-actions {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include 'components/navbar.html'%}
+
+    <section class="project-detail-section">
+        <div class="container">
+
+            
+
+            <!-- Project Hero -->
+            <div class="project-hero">
+                <div class="project-hero-content">
+                    <div class="project-info">
+                        <h1>Sarah's Photography Portfolio</h1>
+                        <div class="project-client">Client: Sarah Johnson</div>
+                        <div class="project-description">
+                            A stunning portfolio website showcasing Sarah's photography work with responsive galleries, client testimonials, and booking system integration. The site features a modern design with smooth animations and optimized performance.
+                        </div>
+                        <div class="project-tags">
+                            <span class="project-tag">React</span>
+                            <span class="project-tag">Photography</span>
+                            <span class="project-tag">Responsive</span>
+                            <span class="project-tag">Gallery</span>
+                            <span class="project-tag">Booking System</span>
+                        </div>
+                    </div>
+                    <div class="project-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">75%</span>
+                            <div class="stat-label">Complete</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">45</span>
+                            <div class="stat-label">Days Active</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">12</span>
+                            <div class="stat-label">Features</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Content -->
+            <div class="project-content">
+                <div class="project-main">
+                    <!-- Project Gallery -->
+                    <!-- <div class="project-gallery">
+                        <h2 style="color: var(--text-color); margin-bottom: 2rem; font-size: 1.5rem;">Project Gallery</h2>
+                        <div class="gallery-grid">
+                            <div class="gallery-item">Homepage Design</div>
+                            <div class="gallery-item">Gallery Layout</div>
+                            <div class="gallery-item">Contact Form</div>
+                            <div class="gallery-item">Mobile View</div>
+                            <div class="gallery-item">Admin Panel</div>
+                            <div class="gallery-item">Booking System</div>
+                        </div>
+                    </div> -->
+
+                    <!-- Project Description -->
+                    <div style="margin-bottom: 3rem;">
+                        <h2 style="color: var(--text-color); margin-bottom: 1.5rem; font-size: 1.5rem;">About This Project</h2>
+                        <div style="color: var(--text-secondary); line-height: 1.7; font-size: 1rem;">
+                            <p style="margin-bottom: 1.5rem;">
+                                Sarah's Photography Portfolio is a comprehensive website solution designed to showcase professional photography work while providing essential business functionality. The project combines aesthetic appeal with practical features to help Sarah grow her photography business.
+                            </p>
+                            <p style="margin-bottom: 1.5rem;">
+                                The website features a responsive design that looks stunning on all devices, from desktop computers to mobile phones. We've implemented a custom gallery system that allows for easy photo management and beautiful presentation of Sarah's work.
+                            </p>
+                            <p>
+                                Key features include an integrated booking system for client appointments, a contact form with automated responses, client testimonials section, and a blog for sharing photography tips and recent work. The site is optimized for search engines and loads quickly to provide the best user experience.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="project-sidebar">
+                    <!-- Project Details -->
+                    <div class="sidebar-card">
+                        <h3>Project Details</h3>
+                        <ul class="project-details-list">
+                            <li>
+                                <span class="detail-label">Status</span>
+                                <span class="status-badge status-active">Active</span>
+                            </li>
+                            <li>
+                                <span class="detail-label">Start Date</span>
+                                <span class="detail-value">January 15, 2024</span>
+                            </li>
+                            <!-- <li>
+                                <span class="detail-label">Expected Completion</span>
+                                <span class="detail-value">March 1, 2024</span>
+                            </li> -->
+                            <li>
+                                <span class="detail-label">Project Type</span>
+                                <span class="detail-value">Website Development</span>
+                            </li>
+                            <!-- <li>
+                                <span class="detail-label">Budget</span>
+                                <span class="detail-value">$2,500</span>
+                            </li> -->
+                        </ul>
+                    </div>
+
+                    <!-- Progress -->
+                    <div class="sidebar-card">
+                        <h3>Progress</h3>
+                        <div class="progress-section">
+                            <div class="progress-bar-large">
+                                <div class="progress-fill-large" style="width: 75%"></div>
+                            </div>
+                            <div class="progress-text">
+                                <span>75% Complete</span>
+                                <span>3 weeks remaining</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tech Stack -->
+                    <div class="sidebar-card">
+                        <h3>Technologies Used</h3>
+                        <div class="tech-stack">
+                            <span class="tech-item">React</span>
+                            <span class="tech-item">Next.js</span>
+                            <span class="tech-item">Tailwind CSS</span>
+                            <span class="tech-item">Node.js</span>
+                            <span class="tech-item">MongoDB</span>
+                            <span class="tech-item">Vercel</span>
+                        </div>
+                    </div>
+
+                    <!-- Timeline -->
+                    <!-- <div class="sidebar-card">
+                        <h3>Project Timeline</h3>
+                        <div class="project-timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-date">Jan 15, 2024</div>
+                                <div class="timeline-title">Project Started</div>
+                                <div class="timeline-description">Initial planning and requirements gathering</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">Jan 22, 2024</div>
+                                <div class="timeline-title">Design Phase</div>
+                                <div class="timeline-description">UI/UX design and wireframes completed</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">Feb 1, 2024</div>
+                                <div class="timeline-title">Development Started</div>
+                                <div class="timeline-description">Frontend development and gallery system</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">Feb 15, 2024</div>
+                                <div class="timeline-title">Backend Integration</div>
+                                <div class="timeline-description">Booking system and admin panel</div>
+                            </div>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+
+            <!-- Comments Section -->
+            <div class="comments-section">
+                <div class="comments-header">
+                    <h3 class="comments-title">Project Comments</h3>
+                    <span class="comments-count">8 comments</span>
+                </div>
+
+                <!-- Comment Form -->
+                <div class="comment-form">
+                    <h4>Leave a Comment</h4>
+                    <form id="commentForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" class="form-input" placeholder="Your name" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-input" placeholder="Your email" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <textarea class="form-input comment-textarea" placeholder="Share your thoughts about this project..." required></textarea>
+                        </div>
+                        <button type="submit" class="comment-submit">Post Comment</button>
+                    </form>
+                </div>
+
+                <!-- Comments List -->
+                <div class="comments-list">
+                    <div class="comment-item">
+                        <div class="comment-header">
+                            <div class="comment-author">
+                                <div class="author-avatar">SJ</div>
+                                <div class="author-info">
+                                    <div class="author-name">Sarah Johnson</div>
+                                    <div class="comment-date">2 days ago</div>
+                                </div>
+                            </div>
+                            <div class="comment-rating">
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                                <span class="star">★</span>
+                            </div>
+                        </div>
+                        <div class="comment-text">
+                            I'm absolutely thrilled with how my portfolio website is turning out! The design perfectly captures my photography style and the gallery functionality is exactly what I envisioned. The team has been incredibly responsive to my feedback and suggestions. Can't wait to see the final result!
+                        </div>
+                        <div class="comment-actions">
+                            <button class="comment-action liked">👍 15</button>
+                            <button class="comment-action">💬 Reply</button>
+                            <button class="comment-action">🔗 Share</button>
+                        </div>
+                    </div>
+
+                    
+
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% include 'components/footer.html'%}
+   
+
+    <script src="static/script.js"></script>
+    <script>
+        // Animate progress bar on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressBar = document.querySelector('.progress-fill-large');
+            const originalWidth = progressBar.style.width;
+            progressBar.style.width = '0%';
+            
+            setTimeout(() => {
+                progressBar.style.width = originalWidth;
+            }, 500);
+
+            // Animate stats
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(stat => {
+                const text = stat.textContent;
+                const isPercentage = text.includes('%');
+                const finalValue = parseInt(text);
+                let currentValue = 0;
+                const increment = finalValue / 50;
+                
+                const timer = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= finalValue) {
+                        stat.textContent = isPercentage ? finalValue + '%' : finalValue;
+                        clearInterval(timer);
+                    } else {
+                        stat.textContent = isPercentage ? Math.floor(currentValue) + '%' : Math.floor(currentValue);
+                    }
+                }, 30);
+            });
+        });
+
+        // Comment form handling
+        const commentForm = document.getElementById('commentForm');
+        commentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = this.querySelector('input[type="text"]').value;
+            const email = this.querySelector('input[type="email"]').value;
+            const comment = this.querySelector('textarea').value;
+            
+            // Create new comment element
+            const newComment = document.createElement('div');
+            newComment.className = 'comment-item';
+            newComment.innerHTML = `
+                <div class="comment-header">
+                    <div class="comment-author">
+                        <div class="author-avatar">${name.charAt(0).toUpperCase()}</div>
+                        <div class="author-info">
+                            <div class="author-name">${name}</div>
+                            <div class="comment-date">Just now</div>
+                        </div>
+                    </div>
+                    <div class="comment-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                    </div>
+                </div>
+                <div class="comment-text">${comment}</div>
+                <div class="comment-actions">
+                    <button class="comment-action">👍 0</button>
+                    <button class="comment-action">💬 Reply</button>
+                    <button class="comment-action">🔗 Share</button>
+                </div>
+            `;
+            
+            // Add to comments list
+            const commentsList = document.querySelector('.comments-list');
+            commentsList.insertBefore(newComment, commentsList.firstChild);
+            
+            // Update comments count
+            const commentsCount = document.querySelector('.comments-count');
+            const currentCount = parseInt(commentsCount.textContent.split(' ')[0]);
+            commentsCount.textContent = `${currentCount + 1} comments`;
+            
+            // Reset form
+            this.reset();
+            
+            // Show success message
+            showNotification('Comment posted successfully!', 'success');
+        });
+
+        // Comment actions
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('comment-action')) {
+                if (e.target.textContent.includes('👍')) {
+                    e.target.classList.toggle('liked');
+                    const currentLikes = parseInt(e.target.textContent.split(' ')[1]);
+                    const newLikes = e.target.classList.contains('liked') ? currentLikes + 1 : currentLikes - 1;
+                    e.target.textContent = `👍 ${newLikes}`;
+                }
+            }
+        });
+
+        // Gallery item click effect
+        document.querySelectorAll('.gallery-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1.05)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                }, 150);
+            });
+        });
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                color: white;
+                font-weight: 600;
+                z-index: 1000;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                ${type === 'success' ? 'background-color: var(--secondary-color);' : 'background-color: var(--primary-color);'}
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

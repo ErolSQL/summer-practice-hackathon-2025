@@ -27,6 +27,50 @@ EMAIL_USER = os.getenv("EMAIL_USER")
 EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY") 
 app.secret_key = os.getenv('SECRET_KEY')
+basedir = os.path.abspath(os.path.dirname(__file__))
+UPLOAD_FOLDER = os.path.join(basedir, 'storage')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
+
+
+@app.route('/submit-project', methods=['POST'])
+def submit_project():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    title = request.form.get('projectTitle')
+    client_name = request.form.get('clientName')
+    project_type = request.form.get('projectType')
+    description = request.form.get('projectDescription')
+
+    new_project = Project(
+        user_id=session['user_id'],
+        title=title,
+        client_name=client_name,
+        project_type=project_type,
+        description=description
+    )
+
+    db.session.add(new_project)
+    db.session.commit()
+
+    project_folder = os.path.join(UPLOAD_FOLDER, str(new_project.id))
+    os.makedirs(project_folder, exist_ok=True)
+
+    files = request.files.getlist('projectFile')
+    for file in files:
+        if file and file.filename:
+
+            relative_path = file.filename
+            safe_path = os.path.normpath(relative_path)  # normalizeaza path-ul
+            full_path = os.path.join(project_folder, safe_path)
+
+
+            os.makedirs(os.path.dirname(full_path), exist_ok=True)
+            file.save(full_path)
+
+    return redirect(url_for('account'))
 
 
 
@@ -38,11 +82,6 @@ db.init_app(app)
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('error.html'), 404
-
-
-
-
-
 
 
 
@@ -86,49 +125,8 @@ def logout():
 
 
 
-UPLOAD_FOLDER = 'storage'
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
-app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  
-
-@app.route('/submit-project', methods=['POST'])
-def submit_project():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-
-    title = request.form.get('projectTitle')
-    client_name = request.form.get('clientName')
-    project_type = request.form.get('projectType')
-    description = request.form.get('projectDescription')
-
-    new_project = Project(
-        user_id=session['user_id'],
-        title=title,
-        client_name=client_name,
-        project_type=project_type,
-        description=description
-    )
-
-    db.session.add(new_project)
-    db.session.commit()
-
-    project_folder = os.path.join(UPLOAD_FOLDER, str(new_project.id))
-    os.makedirs(project_folder, exist_ok=True)
-
-    files = request.files.getlist('projectFile')
-    for file in files:
-        if file and file.filename:
-
-            relative_path = file.filename
-            safe_path = os.path.normpath(relative_path)  # normalizeaza path-ul
-            full_path = os.path.join(project_folder, safe_path)
-
-
-            os.makedirs(os.path.dirname(full_path), exist_ok=True)
-            file.save(full_path)
-
-    return redirect(url_for('account'))
 
 
 
@@ -160,7 +158,9 @@ def registerpage():
     return render_template('register.html')
 
 
-
+@app.route('/projects')
+def projects():
+    return render_template('projects.html')
 
 
 
@@ -169,21 +169,18 @@ def registerpage():
 
 @app.route('/account')
 def account():
-    if 'user_id' not in session:
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for('login'))  # sau registerpage, după caz
+
+    user = User.query.get(user_id)
+    if not user:
+        session.pop('user_id', None)
         return redirect(url_for('login'))
-    
-    user = User.query.get(session['user_id'])
-    projects = Project.query.filter_by(user_id=user.id).all()
+
+    return render_template('account.html', user=user)
 
 
-    for project in projects:
-        project_folder = os.path.join(UPLOAD_FOLDER, str(project.id))
-        if os.path.exists(project_folder):
-            project.files = os.listdir(project_folder)
-        else:
-            project.files = []
-
-    return render_template('account.html', email=user.email, projects=projects)
 
 
 
@@ -195,7 +192,9 @@ def logoutpage():
 
 
 
-
+@app.route('/projects-page')
+def projects_page():
+    return render_template('projects-page.html')
 
 
 
