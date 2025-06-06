@@ -11,6 +11,11 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+load_dotenv(os.path.join(basedir, '.env'))
+
+
 app = Flask(__name__)
 migrate = Migrate(app, db)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gitgud.db'
