@@ -1,14 +1,26 @@
-from flask import Flask, url_for, render_template, jsonify, session, request
+from flask import Flask, url_for, render_template, jsonify, session, request, redirect
 import smtplib
 from models import db, User, OTP
 import random
 import os
 import string
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+
+
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///gitgud.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+load_dotenv()
+
+EMAIL_USER = os.getenv("EMAIL_USER")
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY") 
+app.secret_key = os.getenv('SECRET_KEY')
+
+
 
 def generate_otp():
     return ''.join(random.choices(string.digits, k=8))
@@ -22,8 +34,8 @@ def page_not_found(e):
 def send_email(to_email, code):
     smtp_server = 'smtp.gmail.com'
     smtp_port = 587
-    from_email = 'erolnvm@gmail.com'
-    password = 'yiaw hctz ezxw gkbg'
+    from_email = EMAIL_USER
+    password = EMAIL_PASSWORD
 
     subject = 'Your verification code'
     body = f'Your code is: {code}'
@@ -38,7 +50,7 @@ def send_email(to_email, code):
 
 @app.route('/request-otp', methods=['POST'])
 def request_otp():
-    email = request.json.get('email')
+    email = request.form.get('email')
     code = generate_otp()
 
     OTP.query.filter_by(email=email).delete()
@@ -48,34 +60,103 @@ def request_otp():
     db.session.commit()
 
     send_email(email, code)
+
     
-    return jsonify({'message': 'OTP sent to your email'})
+    return '', 204
 
+@app.route('/register', methods=['POST'])
+def register():
+    email = request.form.get('email')
+    code = request.form.get('code')
+    confirm_code = request.form.get('confirm_code')
 
-
-@app.route('/verify-otp', methods=['POST'])
-def verify_otp():
-    email = request.json.get('email')
-    code = request.json.get('code')
+    if code != confirm_code:
+        return "Codes do not match", 400
 
     otp_entry = OTP.query.filter_by(email=email, code=code).first()
 
     if not otp_entry:
-        return jsonify({'error': 'Invalid code'}), 400
+        return "Invalid code", 400
 
     if datetime.utcnow() - otp_entry.created_at > timedelta(minutes=1):
-        return jsonify({'error': 'Code expired'}), 400
+        return "Code expired", 400
 
+    user = User.query.filter_by(email=email).first()
+    if user:
+        return "User already exists", 400
+
+    user = User(email=email)
+    db.session.add(user)
+    db.session.commit()
+
+    
+    db.session.delete(otp_entry)
+    db.session.commit()
+
+    return redirect(url_for('login'))
+
+
+
+
+
+@app.route('/login/send-otp', methods=['POST'])
+def send_login_otp():
+    email = request.form.get('email')
 
     user = User.query.filter_by(email=email).first()
     if not user:
-        user = User(email=email)
-        db.session.add(user)
-        db.session.commit()
+        return "Account doesn't exist", 400
 
+    code = generate_otp()
+
+    OTP.query.filter_by(email=email).delete()
+
+    otp_entry = OTP(email=email, code=code, created_at=datetime.utcnow())
+    db.session.add(otp_entry)
+    db.session.commit()
+
+    send_email(email, code)
+
+    return '', 204
+
+@app.route('/login', methods=['POST'])
+def verify_login():
+    email = request.form.get('email')
+    code = request.form.get('code')
+
+    otp_entry = OTP.query.filter_by(email=email, code=code).first()
+
+    if not otp_entry:
+        return "Invalid code", 400
+
+    if datetime.utcnow() - otp_entry.created_at > timedelta(minutes=1):
+        return "Code expired", 400
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return "Account doesn't exist", 400
+
+    # Stergem OTP-ul dupa folosire
+    db.session.delete(otp_entry)
+    db.session.commit()
+
+    # Login efectiv
     session['user_id'] = user.id
 
-    return jsonify({'message': 'Logged in successfully'})
+    return redirect(url_for('account'))
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # ---------------------------------------------- PAGINI ----------------------------------------------
 
@@ -90,8 +171,19 @@ def login():
     return render_template("login.html")
 
 @app.route('/register')
-def register():
+def registerpage():
     return render_template('register.html')
+
+@app.route('/account')
+def account():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))  # redirect corect spre login
+    
+    user = User.query.get(session['user_id'])
+    email = user.email
+
+    return render_template('account.html', email=email)
+
 
 
 
@@ -111,4 +203,6 @@ def admin():
     return render_template('admin/admin.html')
 
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)

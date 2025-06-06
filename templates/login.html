@@ -20,43 +20,34 @@
                         <p>Login to your Tech Guru account</p>
                     </div>
                     
-                    <form class="auth-form" id="loginForm">
-                        <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <input 
-                                type="email" 
-                                id="email" 
-                                name="email" 
-                                required 
-                                placeholder="Enter your email"
-                                class="form-input"
-                            >
-                            <span class="form-error" id="emailError"></span>
-                        </div>
-                        <button type="button" id="sendCodeBtn" class="btn secondary send-code-btn">
-                                Send Code
-                        </button>
+                    <form class="auth-form" id="loginForm" method="POST">
 
-                        <div class="form-group">
-                            <label for="code">8-Digit Code</label>
-                            <input 
-                                type="text" 
-                                id="code" 
-                                name="code" 
-                                required 
-                                placeholder="Enter your 8-digit code"
-                                class="form-input"
-                                maxlength="8"
-                                pattern="[0-9]{8}"
-                            >
-                            <span class="form-error" id="codeError"></span>
-                        </div>
+    <!-- Email -->
+    <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required placeholder="Enter your email" class="form-input">
+    </div>
 
-                        <button type="submit" class="btn primary auth-btn">
-                            <span class="btn-text">Login</span>
-                            <span class="btn-loading">Logging in...</span>
-                        </button>
-                    </form>
+    <!-- Buton SEND CODE -->
+    <button type="submit" formaction="/login/send-otp" formmethod="POST" class="btn secondary send-code-btn">
+        Send Code
+    </button>
+
+    <!-- Cod OTP -->
+    <div class="form-group">
+        <label for="code">8-Digit Code</label>
+        <input type="text" id="code" name="code" placeholder="Enter your 8-digit code" class="form-input" maxlength="8" pattern="[0-9]{8}">
+    </div>
+
+    <!-- Submit Login -->
+    <button type="submit" formaction="/login" formmethod="POST" class="btn primary auth-btn">
+        <span class="btn-text">Login</span>
+        <span class="btn-loading">Logging in...</span>
+    </button>
+
+</form>
+
+
 
                     <div class="auth-footer">
                         <p>Don't have an account? <a href="{{url_for('register')}}" class="auth-link">Register here</a></p>

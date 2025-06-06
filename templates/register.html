@@ -19,58 +19,63 @@
                         <p>Create your account and start helping friends</p>
                     </div>
                     
-                    <form class="auth-form" id="registerForm">
-                        <div class="form-group">
-                            <label for="email">Email Address</label>
-                            <input 
-                                type="email" 
-                                id="email" 
-                                name="email" 
-                                required 
-                                placeholder="Enter your email"
-                                class="form-input"
-                            >
-                            <span class="form-error" id="emailError"></span>
-                            <button type="button" id="sendCodeBtn" class="btn secondary send-code-btn">
-                                Send Code
-                            </button>
-                        </div>
+                    <form class="auth-form" action="/request-otp" method="POST" id="registerForm">
 
-                        <div class="form-group">
-                            <label for="code">Enter the 8-Digit code you have received on your email</label>
-                            <input 
-                                type="text" 
-                                id="code" 
-                                name="code" 
-                                required 
-                                placeholder="8-digit code"
-                                class="form-input"
-                                maxlength="8"
-                                pattern="[0-9]{8}"
-                            >
-                            <span class="form-error" id="codeError"></span>
-                        </div>
+    <div class="form-group">
+        <label for="email">Email Address</label>
+        <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            required 
+            placeholder="Enter your email"
+            class="form-input"
+        >
+        <span class="form-error" id="emailError"></span>
+    </div>
 
-                        <div class="form-group">
-                            <label for="confirmCode">The 8-Digit Code</label>
-                            <input 
-                                type="text" 
-                                id="confirmCode" 
-                                name="confirmCode" 
-                                required 
-                                placeholder="Confirm your 8-digit code"
-                                class="form-input"
-                                maxlength="8"
-                                pattern="[0-9]{8}"
-                            >
-                            <span class="form-error" id="confirmCodeError"></span>
-                        </div>
+    <div class="form-group">
+        <label for="code">Enter the 8-Digit code you have received on your email</label>
+        <input 
+            type="text" 
+            id="code" 
+            name="code" 
+            placeholder="8-digit code"
+            class="form-input"
+            maxlength="8"
+            pattern="[0-9]{8}"
+        >
+        <span class="form-error" id="codeError"></span>
+    </div>
 
-                        <button type="submit" class="btn primary auth-btn">
-                            <span class="btn-text">Create Account</span>
-                            <span class="btn-loading">Creating Account...</span>
-                        </button>
-                    </form>
+    <div class="form-group">
+        <label for="confirmCode">The 8-Digit Code</label>
+        <input 
+            type="text" 
+            id="confirmCode" 
+            name="confirm_code" 
+            placeholder="Confirm your 8-digit code"
+            class="form-input"
+            maxlength="8"
+            pattern="[0-9]{8}"
+        >
+        <span class="form-error" id="confirmCodeError"></span>
+    </div>
+
+    <!-- Buton de SEND CODE -->
+    <button type="submit" formaction="/request-otp" formmethod="POST" class="btn secondary send-code-btn">
+    Send Code
+</button>
+
+
+    <!-- Buton de SUBMIT FINAL -->
+    <button type="submit" formaction="/register" formmethod="POST" class="btn primary auth-btn">
+    Create Account
+</button>
+
+
+</form>
+
 
                     <div class="auth-footer">
                         <p>Already have an account? <a href="{{url_for('login')}}" class="auth-link">Login here</a></p>
