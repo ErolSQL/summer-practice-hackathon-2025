@@ -657,8 +657,8 @@
             <!-- Projects Hero -->
             <div class="projects-hero">
                 <div class="projects-hero-content">
-                    <h1>Our Projects</h1>
-                    <p>Explore the amazing projects we've helped our friends bring to life. From websites to mobile apps, hardware setups to digital solutions.</p>
+                    <h1>Feed</h1>
+                    <!-- <p>Explore the amazing projects we've helped our friends bring to life. From websites to mobile apps, hardware setups to digital solutions.</p> -->
                 </div>
             </div>
 
@@ -666,76 +666,54 @@
             
 
             <!-- Projects Grid -->
-            <div class="projects-container">
-                <div class="projects-grid" id="projectsGrid">
-                    <!-- Project 1 -->
-                    <div class="project-card" data-category="website" data-status="active">
-                        <div class="project-thumbnail">Website</div>
-                        <div class="project-content">
-                            <div class="project-header">
-                                <div>
-                                    <div class="project-title">Sarah's Photography Portfolio</div>
-                                    <div class="project-client">Client: Sarah Johnson</div>
-                                </div>
-                                <span class="project-status status-active">Active</span>
-                            </div>
-                            <div class="project-description">
-                                A stunning portfolio website showcasing Sarah's photography work with responsive galleries, client testimonials, and booking system integration.
-                            </div>
-                            <div class="project-tags">
-                                <span class="project-tag">React</span>
-                                <span class="project-tag">Photography</span>
-                                <span class="project-tag">Responsive</span>
-                            </div>
-                         
-                            <div class="project-actions">
-                                <button class="action-btn btn-primary">View Details</button>
-                                <button class="action-btn btn-secondary">Live Preview</button>
-                            </div>
+ <div class="projects-container">
+    <div class="projects-grid" id="projectsGrid">
+
+        {% if projects %}
+            {% for project in projects %}
+            <div class="project-card" data-category="{{ project.project_type }}" data-status="active">
+                <div class="project-thumbnail">{{ project.project_type|capitalize }}</div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <div>
+                            <div class="project-title">{{ project.title }}</div>
+                            <div class="project-client">Client: {{ project.client_name }}</div>
                         </div>
+                        <span class="project-status status-active">Active</span>
+                    </div>
+                    <div class="project-description">
+                        {{ project.description }}
                     </div>
 
-                    
+                    <div class="project-tags">
+                        <span class="project-tag">{{ project.project_type }}</span>
+                    </div>
+
+                    <div class="project-actions">
+                        <button class="action-btn btn-primary">View Details</button>
+                        <button class="action-btn btn-secondary">Live Preview</button>
+                        <a href="{{ url_for('download_project', project_id=project.id) }}" class="action-btn btn-secondary">Download</a>
+                    </div>
                 </div>
             </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-projects-message">
+                <h3>No projects available yet.</h3>
+                <p>Start by uploading your first project!</p>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+
 
             </div>
         </div>
     </section>
 
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <h2>Tech<span>Guru</span></h2>
-                    <p>Making tech simple for your friends</p>
-                </div>
-                <div class="footer-links">
-                    <div class="footer-column">
-                        <h3>Platform</h3>
-                        <ul>
-                            <li><a href="#">Features</a></li>
-                            <li><a href="projects-page.html">Projects</a></li>
-                            <li><a href="#">Resources</a></li>
-                            <li><a href="#">Tutorials</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-column">
-                        <h3>Support</h3>
-                        <ul>
-                            <li><a href="#">Help Center</a></li>
-                            <li><a href="#">Contact</a></li>
-                            <li><a href="#">FAQ</a></li>
-                            <li><a href="#">Community</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 TechGuru. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+    {% include 'components/footer.html'%}
 
     <script src="script.js"></script>
     <script>

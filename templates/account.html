@@ -580,33 +580,35 @@
 
             <!-- Manage Projects Tab -->
             <div class="tab-content active" id="manage">
-                <div class="projects-header">
-                    <h3>My Projects</h3>
-                    <button class="btn primary" onclick="switchTab('upload')">+ New Project</button>
+    <div class="projects-header">
+        <h3>My Projects</h3>
+        <button class="btn primary" onclick="switchTab('upload')">+ New Project</button>
+    </div>
+
+    <div class="projects-grid">
+        {% for project in projects %}
+        <div class="project-item">
+            <div class="project-thumbnail">{{ project.project_type|capitalize }}</div>
+            <div class="project-details">
+                <div class="project-title">{{ project.title }}</div>
+                <div class="project-description">{{ project.description }}</div>
+                <div class="project-meta">
+                    <span class="project-status status-active">Active</span>
+                    <span class="project-date">Started: {{ project.created_at.strftime('%b %d, %Y') }}</span>
                 </div>
-
-
-                <div class="projects-grid">
-                    <div class="project-item">
-                        <div class="project-thumbnail">Website</div>
-                        <div class="project-details">
-                            <div class="project-title">Sarah's Portfolio Website</div>
-                            <div class="project-description">Building a modern portfolio website for Sarah's photography business with responsive design and gallery features.</div>
-                            <div class="project-meta">
-                                <span class="project-status status-active">Active</span>
-                                <span class="project-date">Started: Jan 15, 2024</span>
-                            </div>
-                            <div class="project-actions">
-                                <button class="action-btn btn-edit">Edit</button>
-                                <button class="action-btn btn-delete">Delete</button>
-                            </div>
-                        </div>
-                    </div>
-
-                
+                <div class="project-actions">
                    
+                    
+    <form action="{{ url_for('delete_project', project_id=project.id) }}" method="POST" style="display:inline;">
+        <button type="submit" class="action-btn btn-delete" onclick="return confirm('Are you sure you want to delete this project?')">Delete</button>
+    </form>
                 </div>
             </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
 
             <!-- Upload Project Tab (keeping the exact file upload configuration) -->
             <div class="tab-content" id="upload">
